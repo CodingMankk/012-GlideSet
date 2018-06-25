@@ -1,5 +1,6 @@
 package com.oztaking.www.a012_glideset;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -8,8 +9,13 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 public class MainActivity extends AppCompatActivity {
+
+    private TLayout mTLayout;
 
     private Button mBtnLoadImg;
     private ImageView mImageView;
@@ -27,7 +33,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_tlayout_main);
+
+        mTLayout = (TLayout) findViewById(R.id.tlayout);
 
         mBtnLoadImg = (Button) findViewById(R.id.Btn_LoadImageView);
         mImageView = (ImageView) findViewById(R.id.imagView);
@@ -35,17 +44,74 @@ public class MainActivity extends AppCompatActivity {
         mBtnLoadImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Glide.with(getApplicationContext())
-                        .load(urlGif)
-//                        .asBitmap()
-                        .asGif()
-                        .override(50,50)
-                        .placeholder(R.drawable.loading)
-                        .error(R.drawable.error)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(mImageView);
+
             }
+
         });
 
+
+        loadImageView();
+        loadTLayout();
+
     }
+
+
+    private void loadImageView() {
+        Glide.with(getApplicationContext())
+                .load(urlGif)
+                .override(50, 50)
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.error)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(mImageView);
+    }
+
+
+    /**
+     * into()方法还可以传入别的参数:
+     * [1]简单的simpleTarget；
+     */
+    private void loadSimpleTarget() {
+
+
+
+        SimpleTarget<GlideDrawable> simpleTarget1 = new SimpleTarget<GlideDrawable>() {
+            @Override
+            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                mImageView.setImageDrawable(resource);
+            }
+        };
+
+
+        SimpleTarget<Bitmap> simpleTarget2 = new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                mImageView.setImageBitmap(resource);
+            }
+        };
+
+        Glide.with(getApplicationContext())
+                .load(urlGif)
+                .override(50, 50)
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.error)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+//             .into(simpleTarget2);
+                .into(simpleTarget1);
+    }
+
+    /**
+     * into()方法还可以传入别的参数:
+     * [1]简单的simpleTarget；
+     */
+
+
+    //
+    private void loadTLayout() {
+        Glide.with(this)
+                .load(url1)
+                .into(mTLayout.getViewTarget());
+    }
+
+
 }
