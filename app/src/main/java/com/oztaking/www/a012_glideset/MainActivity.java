@@ -20,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
 
     private String urlError = "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2385237309,131922640&fm=27&gp=0.jpg";
 
+
+    private String urlBaiduYun = "https://pan.baidu.com/s/14Sz-DZM6jVXJdFfbrjeaPw";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
