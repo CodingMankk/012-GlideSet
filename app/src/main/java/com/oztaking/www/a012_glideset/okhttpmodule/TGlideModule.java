@@ -8,8 +8,11 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.GlideModule;
+import com.oztaking.www.a012_glideset.GlideProgressBar.ProgressInterceptor;
 
 import java.io.InputStream;
+
+import okhttp3.OkHttpClient;
 
 /**
  * @function
@@ -33,6 +36,16 @@ public class TGlideModule implements GlideModule{
     //注册替换的module
     @Override
     public void registerComponents(Context context, Glide glide) {
+
+        /**
+         * 创建了一个OkHttpClient.Builder，然后调用addInterceptor()方法将刚才创建的ProgressInterceptor添加进去，最后将构建出来的新OkHttpClient对象
+           传入到OkHttpGlideUrlLoader.Factory中即可
+         */
+        //添加启用拦截器代码
+        //启用这个拦截器
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(new ProgressInterceptor());//添加拦截器；
+        OkHttpClient okHttpClient = builder.build();
         glide.register(GlideUrl.class, InputStream.class,new OkHttpGlideUrlLoader.ClientFactory());
     }
 }

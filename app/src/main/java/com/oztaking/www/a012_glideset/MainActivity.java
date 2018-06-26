@@ -1,5 +1,6 @@
 package com.oztaking.www.a012_glideset;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -17,10 +18,13 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
 import com.orhanobut.logger.Logger;
+import com.oztaking.www.a012_glideset.GlideProgressBar.ProgressInterceptor;
+import com.oztaking.www.a012_glideset.GlideProgressBar.ProgressListener;
 
 import java.io.File;
 
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private String url_baidulogo = "https://www.baidu.com/img/bd_logo1.png";
     private String url7 = "http://cn.bing.com/az/hprichbg/rb/AvalancheCreek_ROW11173354624_1920x1080.jpg";
     private String url8 = "https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=fd635a6d9122720e7bcee5fc43f06d7b/bba1cd11728b47104d8602c3cacec3fdfc032310.jpg";
+    private String url9 = "http://guolin.tech/test.gif";
 
 
     @Override
@@ -88,7 +93,10 @@ public class MainActivity extends AppCompatActivity {
 //                TTransformGrayscaleTransformation(url1);
 //                TTransformGBTransformation(urlGif);
 //                TTransformMultiTransformation(url8);
-                TOkhttpCompentReplaceTest(url5);
+//                TOkhttpCompentReplaceTest(url5);
+//                TProgressByLog(url8);
+
+                TProgressByLogAndDialog(urlGif);
 
             }});
 
@@ -138,11 +146,11 @@ public class MainActivity extends AppCompatActivity {
 
         Glide.with(getApplicationContext())
                 .load(urlGif)
-                //                .override(50, 50)
-                //                .placeholder(R.drawable.loading)
-                //                .error(R.drawable.error)
-                //                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                //                .into(simpleTarget2);
+                //.override(50, 50)
+                //.placeholder(R.drawable.loading)
+                //.error(R.drawable.error)
+                //.diskCacheStrategy(DiskCacheStrategy.NONE)
+                //.into(simpleTarget2);
                 .into(simpleTarget1);
     }
 
@@ -436,7 +444,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 替换okhttp之后的测试代码
+     * [9]替换okhttp之后的测试代码
      * @param url
      */
     private void TOkhttpCompentReplaceTest(String url){
@@ -445,6 +453,62 @@ public class MainActivity extends AppCompatActivity {
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mImageView);
+    }
+
+    /**
+     * [10]增加进入提示之后：使用log打印下载进度
+     */
+
+    private  void TProgressByLog(String url){
+        Glide.with(this)
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                .into(mImageView);
+    }
+
+
+    /**
+     * [11]增加进入提示之后：使用log打印+progrressDialog显示下载进度
+     */
+
+    private  void TProgressByLogAndDialog(final String url){
+
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMessage("Loading");
+
+        ProgressInterceptor.addListener(url,new ProgressListener(){
+            @Override
+            public void onProgress(int progress) {
+                try {
+                    Thread.sleep(1000);
+                    progressDialog.setProgress(progress);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Glide.with(this)
+                .load(url)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+                .into(new GlideDrawableImageViewTarget(mImageView){
+                    @Override
+                    public void onLoadStarted(Drawable placeholder) {
+                        super.onLoadStarted(placeholder);
+                        progressDialog.show();
+                    }
+
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
+                        super.onResourceReady(resource, animation);
+                        progressDialog.dismiss();
+                        ProgressInterceptor.removeListener(url);
+                    }
+                });
     }
 
 
