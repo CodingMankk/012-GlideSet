@@ -7,7 +7,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.oztaking.www.a012_glideset.MainActivity">
+    tools:context="com.oztaking.www.a012_glideset.MainActivity"
+    android:background="@color/colorPrimary"
+    >
 
     <Button
         android:id="@+id/Btn_LoadImageView"
@@ -21,6 +23,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
     </ImageView>
-
 
 </com.oztaking.www.a012_glideset.TLayout>

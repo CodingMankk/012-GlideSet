@@ -1,6 +1,7 @@
 package com.oztaking.www.a012_glideset;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,15 @@ import com.orhanobut.logger.Logger;
 
 import java.io.File;
 
+import jp.wasabeef.glide.transformations.BlurTransformation;
+import jp.wasabeef.glide.transformations.ColorFilterTransformation;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.CropSquareTransformation;
+import jp.wasabeef.glide.transformations.CropTransformation;
+import jp.wasabeef.glide.transformations.GrayscaleTransformation;
+import jp.wasabeef.glide.transformations.MaskTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
 public class MainActivity extends AppCompatActivity {
 
     private TLayout mTLayout;
@@ -40,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
     private String urlGif = "http://p1.pstatp.com/large/166200019850062839d3";
     private String urlError = "https://ss1.bdstatic" +
             ".com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2385237309,131922640&fm=27&gp=0.jpg";
+
+    private String url_baidulogo = "https://www.baidu.com/img/bd_logo1.png";
+    private String url7 = "http://cn.bing.com/az/hprichbg/rb/AvalancheCreek_ROW11173354624_1920x1080.jpg";
+    private String url8 = "https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=fd635a6d9122720e7bcee5fc43f06d7b/bba1cd11728b47104d8602c3cacec3fdfc032310.jpg";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +79,16 @@ public class MainActivity extends AppCompatActivity {
 //                loadImageView(urlGif);
 //                TDownloadOnlyY(url4);
 //                loadImageView(url4);
-                TListener(url5);
-            }
-        });
+//                TListener(url5);
+//                TImageTransform(url_baidulogo);
+//                TImageTransform(url7);
+//                CircleCrop(url7);
+
+//                TTransformBlurTransformation(url7);
+//                TTransformGrayscaleTransformation(url1);
+//                TTransformGBTransformation(urlGif);
+                TTransformMultiTransformation(url8);
+            }});
 
         //loadImageView();
 //        loadTLayout(url3);
@@ -275,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        Logger.i("TListener.onResourceReady()");
                         Logger.i(resource.toString());
 //                        return true;
                         return false;
@@ -282,6 +305,135 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .into(mImageView);
     }
+
+    /**
+     * [6]添加和取消图片的变换
+     * 只需要借助override()方法强制将图片尺寸指定成原始大小
+     */
+    private void TImageTransform(String url){
+//        RequestManager with = Glide.with(this);
+//        DrawableTypeRequest<String> load = with.load(url);
+//        DrawableRequestBuilder<String> stringDrawableRequestBuilder = load.dontTransform();
+//        Target<GlideDrawable> into = load.into(mImageView);
+
+//        Glide.with(this)
+//                .load(url)
+//                .dontTransform()
+//                .into(mImageView);
+
+//        Glide.with(this)
+//                .load(url)
+//                .override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL)
+//                .into(mImageView);
+
+//        Glide.with(this)
+//                .load(url)
+//                .centerCrop()
+//                .into(mImageView);
+
+        Glide.with(this)
+                .load(url)
+                .fitCenter()
+                .into(mImageView);
+    }
+
+
+    /**
+     * [7]对图片进行圆形处理--增加了对圆形图片描边的效果；
+     * 新建类：CircleCrop
+     */
+
+    private void CircleCrop(String url){
+//        Glide.with(this)
+//                .load(url)
+//                .transform(new CircleCrop(this))
+//                .into(mImageView);
+
+
+        //带白色边框的圆形图片加载
+        Glide.with(this).
+                load(url)
+                .centerCrop()
+                .transform(new CircleCrop(getApplicationContext(),5,Color.WHITE))
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(mImageView);
+    }
+
+
+    /**
+     * [8]图形变换的使用:使用第三方库：
+     * glide-transformations的项目主页地址是 https://github.com/wasabeef/glide-transformations
+     *
+     * 参考文章：https://www.cnblogs.com/qianyukun/p/6867436.html
+     * BlurTransformation ---0 模糊效果
+     * GrayscaleTransformation ---1 黑白效果
+     * BlurTransformation+GrayscaleTransformation：黑白+模糊；
+     */
+
+    private void TTransformBlurTransformation(String url){
+        Glide.with(this)
+                .load(url)
+                .bitmapTransform(new BlurTransformation(this))
+                .into(mImageView);
+    }
+
+    private void TTransformGrayscaleTransformation(String url){
+        Glide.with(this)
+                .load(url)
+                .bitmapTransform(new GrayscaleTransformation(this))
+                .into(mImageView);
+
+    }
+
+    private void TTransformGBTransformation(String url){
+        Glide.with(this)
+                .load(url)
+                .bitmapTransform(new BlurTransformation(this),new GrayscaleTransformation(this))
+                .into(mImageView);
+    }
+
+    /**
+     *
+     *  BlurTransformation--模糊
+     *  ColorFilterTransformation --颜色遮盖
+     *  CropCircleTransformation --圆形
+     *  CropSquareTransformation --正方形剪裁
+     *  CropTransformation--自定义尺寸的尺寸的剪裁；
+     *  GrayscaleTransformation --黑白
+     *  MaskTransformation--遮盖效果
+     *  RoundedCornersTransformation--圆角剪裁效果；
+     *
+     * @param url
+     */
+
+
+    private void TTransformMultiTransformation(String url){
+
+//        MultiTransformation multi = new MultiTransformation(
+//                new BlurTransformation(getApplicationContext(),25),
+//                new RoundedCornersTransformation(getApplicationContext(),128, 0, RoundedCornersTransformation.CornerType.ALL),
+//        new CropSquareTransformation(getApplicationContext())
+//        );
+
+        BlurTransformation blurTransformation = new BlurTransformation(getApplicationContext(), 25);
+        ColorFilterTransformation colorFilterTransformation = new ColorFilterTransformation(getApplicationContext(), Color.WHITE);
+        CropCircleTransformation cropCircleTransformation = new CropCircleTransformation(getApplicationContext());
+        CropSquareTransformation cropSquareTransformation = new CropSquareTransformation(getApplicationContext());
+        CropTransformation crpTransformation = new CropTransformation(getApplicationContext(), 500, 500);
+        GrayscaleTransformation grayscaleTransformation = new GrayscaleTransformation(getApplicationContext());
+        MaskTransformation maskTransformation = new MaskTransformation(getApplicationContext(), R.mipmap.ic_launcher);
+
+        RoundedCornersTransformation roundedCornersTransformation = new RoundedCornersTransformation(getApplicationContext(), 50, 20);
+
+
+        Glide.with(this)
+                .load(url)
+                .bitmapTransform(roundedCornersTransformation)
+                .into(mImageView);
+    }
+
+
+
 
 
 
