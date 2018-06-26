@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
 
         <meta-data
-            android:name="com.oztaking.www.a012_glideset.TGlideModule"
+            android:name="com.oztaking.www.a012_glideset.okhttpmodule.TGlideModule"
             android:value="GlideModule"
             />
         <activity android:name=".MainActivity">

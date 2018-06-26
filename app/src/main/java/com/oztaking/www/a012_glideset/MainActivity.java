@@ -87,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
 //                TTransformBlurTransformation(url7);
 //                TTransformGrayscaleTransformation(url1);
 //                TTransformGBTransformation(urlGif);
-                TTransformMultiTransformation(url8);
+//                TTransformMultiTransformation(url8);
+                TOkhttpCompentReplaceTest(url5);
+
             }});
 
         //loadImageView();
@@ -407,6 +409,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
 
+
     private void TTransformMultiTransformation(String url){
 
 //        MultiTransformation multi = new MultiTransformation(
@@ -429,6 +432,18 @@ public class MainActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(url)
                 .bitmapTransform(roundedCornersTransformation)
+                .into(mImageView);
+    }
+
+    /**
+     * 替换okhttp之后的测试代码
+     * @param url
+     */
+    private void TOkhttpCompentReplaceTest(String url){
+        Glide.with(this)
+                .load(url)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mImageView);
     }
 

@@ -1,4 +1,4 @@
-package com.oztaking.www.a012_glideset;
+package com.oztaking.www.a012_glideset.okhttpmodule;
 
 import android.content.Context;
 
@@ -6,7 +6,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.GlideModule;
+
+import java.io.InputStream;
 
 /**
  * @function
@@ -14,6 +17,7 @@ import com.bumptech.glide.module.GlideModule;
  * [1] Glide内置ExternalCacheDiskCacheFactory，将加载的图片缓存到SD卡
  * [2] InternalCacheDiskCacheFactory和ExternalCacheDiskCacheFactory的默认硬盘缓存大小都是250M
  */
+
 
 public class TGlideModule implements GlideModule{
 
@@ -26,8 +30,9 @@ public class TGlideModule implements GlideModule{
 
     }
 
+    //注册替换的module
     @Override
     public void registerComponents(Context context, Glide glide) {
-
+        glide.register(GlideUrl.class, InputStream.class,new OkHttpGlideUrlLoader.ClientFactory());
     }
 }
